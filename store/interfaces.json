@@ -1,0 +1,18 @@
+{
+  "list-context.info-card-list": {
+    "component": "InfoCardList",
+    "composition": "children",
+    "allowed": "*",
+    "content": {
+      "properties": {
+        "infoCards": {
+          "type": "array",
+          "title": "admin/editor.info-card-list.infocard.title",
+          "items": {
+            "$ref": "app:auchan.info-card-custom#/definitions/InfoCard"
+          }
+        }
+      }
+    }
+  }
+}
