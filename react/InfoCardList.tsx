@@ -14,6 +14,9 @@ const messages = defineMessages({
 })
 
 export type InfoCardsSchema = Array<{
+  startDate?: string
+  endDate?: string
+  blockClass?: string
   [key: string]: any;
 }>
 
@@ -34,8 +37,22 @@ function InfoCardList({
 
   const { handles } = useCssHandles(CSS_HANDLES)
 
-  const imageListContent = infoCards.map(
-    ({ ...props }, idx) => (
+  const isWithinDateRange = (startDate?: string, endDate?: string) => {
+    const now = new Date()
+    const start = startDate ? new Date(startDate) : null
+    const end = endDate ? new Date(endDate) : null
+
+    if (start && now < start) return false // Exclude if current date is before startDate
+    if (end && now > end) return false // Exclude if current date is after endDate
+    return true
+  }
+
+  // Filter out infoCards not within the date range
+  const filteredInfoCards = infoCards.filter(card =>
+    isWithinDateRange(card.startDate, card.endDate)
+  )
+
+  const imageListContent = filteredInfoCards.map((props, idx) =>(
       <div className={handles[props.blockClass] ? handles[props.blockClass] : ''}>
         <InfoCardCustom
           key={idx}
