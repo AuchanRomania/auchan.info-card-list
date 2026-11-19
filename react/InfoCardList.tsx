@@ -22,10 +22,41 @@ export type InfoCardsSchema = Array<{
 
 export interface InfoCardListProps {
   infoCards: InfoCardsSchema
+  // 'first': the first card is the LCP image and the rest are lazy; 'none': all lazy
+  imagePriority?: 'first' | 'none'
+  imageWidth?: number
+  imageHeight?: number
+  mobileImageWidth?: number
+  mobileImageHeight?: number
+  // `sizes` of the card images (CSS widths, per device)
+  imageSizes?: string
+  mobileImageSizes?: string
+}
+
+interface InfoCardListItemProps {
+  className: string
+  // Set by slider-layout on the slide clones it renders in infinite mode
+  __isDuplicated?: boolean
+  [key: string]: any
+}
+
+function InfoCardListItem({ className, ...cardProps }: InfoCardListItemProps) {
+  return (
+    <div className={className}>
+      <InfoCardCustom {...cardProps} />
+    </div>
+  )
 }
 
 function InfoCardList({
   infoCards,
+  imagePriority,
+  imageWidth,
+  imageHeight,
+  mobileImageWidth,
+  mobileImageHeight,
+  imageSizes,
+  mobileImageSizes,
   children,
 }: PropsWithChildren<InfoCardListProps>) {
   const { list } = useListContext() || []
@@ -52,15 +83,22 @@ function InfoCardList({
     isWithinDateRange(card.startDate, card.endDate)
   )
 
-  const imageListContent = filteredInfoCards.map((props, idx) =>(
-      <div className={handles[props.blockClass] ? handles[props.blockClass] : ''}>
-        <InfoCardCustom
-          key={idx}
-          {...props}
-        />
-      </div>
-    )
-  )
+  const imageListContent = filteredInfoCards.map((props, idx) => (
+    <InfoCardListItem
+      key={props.promotionId || props.id || idx}
+      {...props}
+      className={handles[props.blockClass] ? handles[props.blockClass] : ''}
+      {...(imagePriority && {
+        priority: imagePriority === 'first' && idx === 0,
+      })}
+      imageWidth={imageWidth}
+      imageHeight={imageHeight}
+      mobileImageWidth={mobileImageWidth}
+      mobileImageHeight={mobileImageHeight}
+      imageSizes={imageSizes}
+      mobileImageSizes={mobileImageSizes}
+    />
+  ))
 
   const newListContextValue = list.concat(imageListContent)
 
