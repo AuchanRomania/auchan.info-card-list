@@ -22,20 +22,17 @@ export type InfoCardsSchema = Array<{
 
 export interface InfoCardListProps {
   infoCards: InfoCardsSchema
-  // 'first': the first card is the LCP image and the rest are lazy; 'none': all lazy
   imagePriority?: 'first' | 'none'
   imageWidth?: number
   imageHeight?: number
   mobileImageWidth?: number
   mobileImageHeight?: number
-  // `sizes` of the card images (CSS widths, per device)
   imageSizes?: string
   mobileImageSizes?: string
 }
 
 interface InfoCardListItemProps {
   className: string
-  // Set by slider-layout on the slide clones it renders in infinite mode
   __isDuplicated?: boolean
   [key: string]: any
 }
