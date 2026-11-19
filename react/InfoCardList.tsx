@@ -22,10 +22,38 @@ export type InfoCardsSchema = Array<{
 
 export interface InfoCardListProps {
   infoCards: InfoCardsSchema
+  imagePriority?: 'first' | 'none'
+  imageWidth?: number
+  imageHeight?: number
+  mobileImageWidth?: number
+  mobileImageHeight?: number
+  imageSizes?: string
+  mobileImageSizes?: string
+}
+
+interface InfoCardListItemProps {
+  className: string
+  __isDuplicated?: boolean
+  [key: string]: any
+}
+
+function InfoCardListItem({ className, ...cardProps }: InfoCardListItemProps) {
+  return (
+    <div className={className}>
+      <InfoCardCustom {...cardProps} />
+    </div>
+  )
 }
 
 function InfoCardList({
   infoCards,
+  imagePriority,
+  imageWidth,
+  imageHeight,
+  mobileImageWidth,
+  mobileImageHeight,
+  imageSizes,
+  mobileImageSizes,
   children,
 }: PropsWithChildren<InfoCardListProps>) {
   const { list } = useListContext() || []
@@ -52,15 +80,22 @@ function InfoCardList({
     isWithinDateRange(card.startDate, card.endDate)
   )
 
-  const imageListContent = filteredInfoCards.map((props, idx) =>(
-      <div className={handles[props.blockClass] ? handles[props.blockClass] : ''}>
-        <InfoCardCustom
-          key={idx}
-          {...props}
-        />
-      </div>
-    )
-  )
+  const imageListContent = filteredInfoCards.map((props, idx) => (
+    <InfoCardListItem
+      key={props.promotionId || props.id || idx}
+      {...props}
+      className={handles[props.blockClass] ? handles[props.blockClass] : ''}
+      {...(imagePriority && {
+        priority: imagePriority === 'first' && idx === 0,
+      })}
+      imageWidth={imageWidth}
+      imageHeight={imageHeight}
+      mobileImageWidth={mobileImageWidth}
+      mobileImageHeight={mobileImageHeight}
+      imageSizes={imageSizes}
+      mobileImageSizes={mobileImageSizes}
+    />
+  ))
 
   const newListContextValue = list.concat(imageListContent)
 
